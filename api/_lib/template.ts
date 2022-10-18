@@ -100,6 +100,7 @@ function getCss(theme: string) {
 
     .tokenLogo {
         margin-right: 32px;
+        width:1.5em;
         border-radius: 50%;
     }
 
@@ -156,12 +157,14 @@ function getCss(theme: string) {
         color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
         margin-bottom: -16px;
     }
+    
 
     .emoji {
         height: 1em;
         width: 1em;
         margin: 0 .05em 0 .1em;
         vertical-align: -0.1em;
+        color: ${theme === "dark" ? "white" : "#575A68"};
     }`;
 }
 
@@ -217,6 +220,7 @@ function renderOnlyLogo(image: string) {
 }
 
 function renderWithoutPrice({images, cardName, md}: IRenderWithoutPrice) {
+    console.log(cardName, ": ");
     return `<div class="header center">
                 <div class="details">
                     ${getImage(images[1], '100', "tokenLogo")}
@@ -229,6 +233,7 @@ function renderWithoutPrice({images, cardName, md}: IRenderWithoutPrice) {
 }
 
 function renderWithPrice({images, cardName,  valueHeader, md}: IRenderWithPrice) {
+    console.log(cardName,"::::",sanitizeHtml(valueHeader));
     return `<div class="header">
                 <div class="details">
                     ${getImage(images[1], '80', "tokenLogo")}

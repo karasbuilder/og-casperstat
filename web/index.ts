@@ -145,7 +145,7 @@ const imageDarkOptions: DropdownOption[] = [
     { text: 'Grindy', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
 ];
 
-const protocolImage = "https://defillama.com/icons/curve.jpg"
+const protocolImage = "https://casperstats.io/casperstats_logo_dark.svg"
 
 
 interface AppState extends ParsedRequest {
@@ -174,8 +174,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'jpeg',
         theme = 'light',
         md = false,
-        cardName = 'CasperStats',
-        valueHeader = 'Casperstats Description Header',
+        cardName = '',
+        valueHeader = '',
         footerURL = "https://casperstats.io/",
         images=[imageLightOptions[0].value, protocolImage],
         showToast = false,
@@ -204,7 +204,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         input: H(Button, {
             label: `Add Image`,
             onclick: () => {
-                const nextImage = 'https://defillama.com/icons/curve.jpg'
+                const nextImage = 'https://casperstats.io/casperstats_logo_dark.svg'
                 setLoadingState({ images: [...images, nextImage] })
             }
         }),

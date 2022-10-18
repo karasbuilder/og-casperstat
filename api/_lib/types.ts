@@ -5,8 +5,6 @@ export interface ParsedRequest {
     fileType: FileType;
     cardName: string;
     valueHeader: string;
-    tvl: string;
-    volumeChange: string;
     footerURL: string;
     theme: Theme;
     md: boolean;

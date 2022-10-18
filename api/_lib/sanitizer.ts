@@ -4,10 +4,10 @@ const entityMap: { [key: string]: string } = {
     ">": "&gt;",
     '"': '&quot;',
     "'": '&#39;',
-    "/": '&#x2F;'
+    "/": '&#x2F;',
+    "+":'&nbsp'
 };
 
 export function sanitizeHtml(html: string) {
     return String(html).replace(/[&<>"'\/]/g, key => entityMap[key]);
 }
-
