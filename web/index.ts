@@ -1,4 +1,4 @@
-import type { ParsedRequest, Theme, FileType } from '../api/_lib/types';
+import { ParsedRequest, Theme, FileType } from '../api/_lib/types';
 const { H, R, copee } = (window as any);
 let timeout = -1;
 
@@ -60,18 +60,15 @@ const Dropdown = ({ options, value, onchange, small }: DropdownProps) => {
 interface TextInputProps {
     value: string;
     oninput: (val: string) => void;
-    small: boolean;
-    placeholder?: string;
-    type?: string
 }
 
-const TextInput = ({ value, oninput, small, type = 'text', placeholder = '' }: TextInputProps) => {
+const TextInput = ({ value, oninput }: TextInputProps) => {
     return H('div',
-        { className: 'input-outer-wrapper' + (small ? ' small' : '') },
+        { className: 'input-outer-wrapper' },
         H('div',
             { className: 'input-inner-wrapper' },
             H('input',
-                { type, value, placeholder, oninput: (e: any) => oninput(e.target.value) }
+                { type: 'text', value, oninput: (e: any) => oninput(e.target.value) }
             )
         )
     );
@@ -133,29 +130,22 @@ const fileTypeOptions: DropdownOption[] = [
     { text: 'JPEG', value: 'jpeg' },
 ];
 
-const fontSizeOptions: DropdownOption[] = Array
-    .from({ length: 10 })
-    .map((_, i) => i * 25)
-    .filter(n => n > 0)
-    .map(n => ({ text: n + 'px', value: n + 'px' }));
-
 const markdownOptions: DropdownOption[] = [
     { text: 'Plain Text', value: '0' },
     { text: 'Markdown', value: '1' },
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'Vercel', value: 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-black.svg' },
-    { text: 'Next.js', value: 'https://assets.vercel.com/image/upload/front/assets/design/nextjs-black-logo.svg' },
-    { text: 'Hyper', value: 'https://assets.vercel.com/image/upload/front/assets/design/hyper-color-logo.svg' },
+    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama-dark.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft-dark.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-
-    { text: 'Vercel', value: 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-white.svg' },
-    { text: 'Next.js', value: 'https://assets.vercel.com/image/upload/front/assets/design/nextjs-white-logo.svg' },
-    { text: 'Hyper', value: 'https://assets.vercel.com/image/upload/front/assets/design/hyper-bw-logo.svg' },
+    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
 ];
+
+const protocolImage = "https://defillama.com/icons/curve.jpg"
 
 
 interface AppState extends ParsedRequest {
@@ -163,8 +153,6 @@ interface AppState extends ParsedRequest {
     showToast: boolean;
     messageToast: string;
     selectedImageIndex: number;
-    widths: string[];
-    heights: string[];
     overrideUrl: URL | null;
 }
 
@@ -183,37 +171,48 @@ const App = (_: any, state: AppState, setState: SetState) => {
         setState({ ...newState, loading: true });
     };
     const {
-        fileType = 'png',
-        fontSize = '100px',
+        fileType = 'jpeg',
         theme = 'light',
-        md = true,
-        text = '**Hello** World',
-        images=[imageLightOptions[0].value],
-        widths=[],
-        heights=[],
+        md = false,
+        cardName = 'Curve Finance',
+        valueHeader = 'Total Value Locked',
+        tvl = '$100B',
+        volumeChange = "-2%",
+        footerURL = "https://defillama.com/protocol/curve",
+        images=[imageLightOptions[0].value, protocolImage],
         showToast = false,
         messageToast = '',
         loading = true,
         selectedImageIndex = 0,
         overrideUrl = null,
     } = state;
-
+    
     const mdValue = md ? '1' : '0';
     const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
     const url = new URL(window.location.origin);
-    url.pathname = `${encodeURIComponent(text)}.${fileType}`;
-    url.searchParams.append('theme', theme);
-    url.searchParams.append('md', mdValue);
-    url.searchParams.append('fontSize', fontSize);
+    url.pathname = `${cardName ? encodeURIComponent(cardName) : "default"}.${fileType}`;
+    theme && url.searchParams.append('theme', theme);
+    mdValue && url.searchParams.append('md', mdValue);
+    valueHeader && url.searchParams.append('valueHeader', valueHeader);
+    tvl && url.searchParams.append('tvl', tvl);
+    volumeChange && url.searchParams.append('volumeChange', volumeChange);
+    footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
+
     for (let image of images) {
         url.searchParams.append('images', image);
     }
-    for (let width of widths) {
-        url.searchParams.append('widths', width);
-    }
-    for (let height of heights) {
-        url.searchParams.append('heights', height);
-    }
+  
+
+    const showAddImageBtn = images.length === 1 ? ( H(Field, {
+        label: `Image`,
+        input: H(Button, {
+            label: `Add Image`,
+            onclick: () => {
+                const nextImage = 'https://defillama.com/icons/curve.jpg'
+                setLoadingState({ images: [...images, nextImage] })
+            }
+        }),
+    })) : H('div');
 
     return H('div',
         { className: 'split' },
@@ -242,33 +241,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     })
                 }),
                 H(Field, {
-                    label: 'Font Size',
-                    input: H(Dropdown, {
-                        options: fontSizeOptions,
-                        value: fontSize,
-                        onchange: (val: string) => setLoadingState({ fontSize: val })
-                    })
-                }),
-                H(Field, {
-                    label: 'Text Type',
-                    input: H(Dropdown, {
-                        options: markdownOptions,
-                        value: mdValue,
-                        onchange: (val: string) => setLoadingState({ md: val === '1' })
-                    })
-                }),
-                H(Field, {
-                    label: 'Text Input',
-                    input: H(TextInput, {
-                        value: text,
-                        oninput: (val: string) => {
-                            console.log('oninput ' + val);
-                            setLoadingState({ text: val, overrideUrl: url });
-                        }
-                    })
-                }),
-                H(Field, {
-                    label: 'Image 1',
+                    label: 'Logo',
                     input: H('div',
                         H(Dropdown, {
                             options: imageOptions,
@@ -280,35 +253,64 @@ const App = (_: any, state: AppState, setState: SetState) => {
                                 setLoadingState({ images: clone, selectedImageIndex: selected });
                             }
                         }),
-                        H('div',
-                            { className: 'field-flex' },
-                            H(TextInput, {
-                                value: widths[0],
-                                type: 'number',
-                                placeholder: 'width',
-                                small: true,
-                                oninput: (val: string) =>  {
-                                    let clone = [...widths];
-                                    clone[0] = val;
-                                    setLoadingState({ widths: clone });
-                                }
-                            }),
-                            H(TextInput, {
-                                value: heights[0],
-                                type: 'number',
-                                placeholder: 'height',
-                                small: true,
-                                oninput: (val: string) =>  {
-                                    let clone = [...heights];
-                                    clone[0] = val;
-                                    setLoadingState({ heights: clone });
-                                }
-                            })
-                        )
                     ),
                 }),
+                H(Field, {
+                    label: 'Text Type',
+                    input: H(Dropdown, {
+                        options: markdownOptions,
+                        value: mdValue,
+                        onchange: (val: string) => setLoadingState({ md: val === '1' })
+                    })
+                }),
+                H(Field, {
+                    label: 'Name',
+                    input: H(TextInput, {
+                        value: cardName,
+                        oninput: (val: string) => {
+                            setLoadingState({ cardName: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Value Header',
+                    input: H(TextInput, {
+                        value: valueHeader,
+                        oninput: (val: string) => {
+                            setLoadingState({ valueHeader: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'TVL',
+                    input: H(TextInput, {
+                        value: tvl,
+                        oninput: (val: string) => {
+                            setLoadingState({ tvl: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Percent Change',
+                    input: H(TextInput, {
+                        value: volumeChange,
+                        oninput: (val: string) => {
+                            setLoadingState({ volumeChange: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Footer URL',
+                    input: H(TextInput, {
+                        value: footerURL,
+                        oninput: (val: string) => {
+                            console.log('onurlinput ' + val);
+                            setLoadingState({ footerURL: val, overrideUrl: url });
+                        }
+                    })
+                }),
                 ...images.slice(1).map((image, i) => H(Field, {
-                    label: `Image ${i + 2}`,
+                    label: `Image`,
                     input: H('div',
                         H(TextInput, {
                             value: image,
@@ -320,57 +322,19 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            H(TextInput, {
-                                value: widths[i + 1],
-                                type: 'number',
-                                placeholder: 'width',
-                                small: true,
-                                oninput: (val: string) =>  {
-                                    let clone = [...widths];
-                                    clone[i + 1] = val;
-                                    setLoadingState({ widths: clone });
-                                }
-                            }),
-                            H(TextInput, {
-                                value: heights[i + 1],
-                                type: 'number',
-                                placeholder: 'height',
-                                small: true,
-                                oninput: (val: string) =>  {
-                                    let clone = [...heights];
-                                    clone[i + 1] = val;
-                                    setLoadingState({ heights: clone });
-                                }
-                            })
-                        ),
-                        H('div',
-                            { className: 'field-flex' },
                             H(Button, {
-                                label: `Remove Image ${i + 2}`,
+                                label: `Remove Image`,
                                 onclick: (e: MouseEvent) => {
                                     e.preventDefault();
                                     const filter = (arr: any[]) => [...arr].filter((_, n) => n !== i + 1);
                                     const imagesClone = filter(images);
-                                    const widthsClone = filter(widths);
-                                    const heightsClone = filter(heights);
-                                    setLoadingState({ images: imagesClone, widths: widthsClone, heights: heightsClone });
+                                    setLoadingState({ images: imagesClone });
                                 }
                             })
                         )
                     )
                 })),
-                H(Field, {
-                    label: `Image ${images.length + 1}`,
-                    input: H(Button, {
-                        label: `Add Image ${images.length + 1}`,
-                        onclick: () => {
-                            const nextImage = images.length === 1
-                                ? 'https://cdn.jsdelivr.net/gh/remojansen/logo.ts@master/ts.svg'
-                                : '';
-                            setLoadingState({ images: [...images, nextImage] })
-                        }
-                    }),
-                }),
+                showAddImageBtn
             )
         ),
         H('div',
