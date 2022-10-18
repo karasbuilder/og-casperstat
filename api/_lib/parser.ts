@@ -5,7 +5,7 @@ import { ParsedRequest, Theme } from './types';
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { footerURL, images, theme, md, valueHeader } = (query || {});
+    const { footerURL, images, theme, md, content ,typeContent} = (query || {});
 
     if (Array.isArray(theme)) {
         throw new Error('Expected a single theme');
@@ -28,7 +28,8 @@ export function parseRequest(req: IncomingMessage) {
     const parsedRequest: ParsedRequest = {
         fileType: extension === 'jpeg' ? extension : 'png',
         cardName: decodeURIComponent(cardName),
-        valueHeader: getString(valueHeader),
+        content: getString(content),
+        typeContent:getString(typeContent),
         footerURL: decodeURIComponent(url),
         theme: theme === 'dark' ? 'dark' : 'light',
         md: md === '1' || md === 'true',
@@ -62,8 +63,8 @@ function getString(stringOrArray: string[] | string | undefined) {
 
 function getDefaultImages(images: string[], theme: Theme): string[] {
     const defaultImage = theme === 'light'
-        ? "https://defillama.com/defillama-press-kit/defi/SVG/defillama-dark.svg"
-        : "https://defillama.com/defillama-press-kit/defi/SVG/defillama.svg";
+        ? "https://casperstats.io/casperstats_logo.svg"
+        : "https://casperstats.io/casperstats_logo.svg";
 
     if (!images || !images[0]) {
         return [defaultImage];

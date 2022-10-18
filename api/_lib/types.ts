@@ -4,7 +4,8 @@ export type Theme = 'light' | 'dark';
 export interface ParsedRequest {
     fileType: FileType;
     cardName: string;
-    valueHeader: string;
+    content: string;
+    typeContent:string,
     footerURL: string;
     theme: Theme;
     md: boolean;
@@ -13,20 +14,22 @@ export interface ParsedRequest {
 export interface IRenderContent {
     cardName?: string
     images: string[]
-    valueHeader: string
+    content:string
+    typeContent:string
     md: boolean
   
 }
 
-export interface IRenderWithPrice {
+export interface IRenderWithTitle{
     images: string[] 
     cardName: string
-    valueHeader: string
+    content:string
     md: boolean, 
    
 }
-export interface IRenderWithoutPrice {
-    images: string[] 
-    cardName: string
-    md: boolean
+export interface IRenderWithValidator {
+    cardName:string
+    images:string[]
+    content:string
+    md:boolean
 }

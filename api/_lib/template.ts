@@ -2,7 +2,7 @@
 import { readFileSync } from 'fs';
 import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderWithoutPrice } from './types';
+import { ParsedRequest, IRenderContent,IRenderWithTitle} from './types';
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
@@ -95,14 +95,10 @@ function getCss(theme: string) {
     }
 
     .logo {
-        margin-left: "100px";
+         margin-right: 32px;
     }
 
-    .tokenLogo {
-        margin-right: 32px;
-        width:1.5em;
-        border-radius: 50%;
-    }
+  
 
     .main {
         padding: 40px;
@@ -156,6 +152,7 @@ function getCss(theme: string) {
         font-size: 24px;
         color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
         margin-bottom: -16px;
+        text-align:center;
     }
     
 
@@ -169,7 +166,7 @@ function getCss(theme: string) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, valueHeader, footerURL, theme, md, images } = parsedReq;
+    const { cardName, footerURL, theme, typeContent, content, md, images } = parsedReq;
 
   
     return `<!DOCTYPE html>
@@ -181,9 +178,8 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme)}
                 </style>
                 <body>
-                    ${renderContent({cardName, images, valueHeader, md})}
-                    <div class="footer">
-                       Read more about Casperstats on:
+                ${renderContent({cardName,images,content,md,typeContent})}
+                    <div class="footer">                     
                         ${emojify(
                             md ? marked(footerURL) : sanitizeHtml(footerURL || "https://casperstats.io/")
                         )}
@@ -202,52 +198,38 @@ function getImage(src: string, height = '80', className = 'logo') {
     />`
 }
 
-function renderContent({cardName, images, valueHeader, md}: IRenderContent) {
-    if (!cardName || cardName === "default") {
+function renderContent({ cardName, images, content, md, typeContent }: IRenderContent) {
+    if (!cardName || cardName == "default") {
         return renderOnlyLogo(images[0])
-    } else if (!valueHeader) {
-        return renderWithoutPrice({images, cardName, md})
-    } else {
-        return renderWithPrice({images, cardName, valueHeader, md})
+    } else if (typeContent == 'title') {
+        return renderWithTitle({cardName,images,content,md});
+    } else{
+        return renderWithTitle({cardName,images,content,md});
     }
+
 }
-
-
 function renderOnlyLogo(image: string) {
-    return `<div class="center">
+    return `
+    <div class="center">
                 ${getImage(image, "120", "logo")}
             </div>`
 }
 
-function renderWithoutPrice({images, cardName, md}: IRenderWithoutPrice) {
-    console.log(cardName, ": ");
-    return `<div class="header center">
-                <div class="details">
-                    ${getImage(images[1], '100', "tokenLogo")}
-                    <div class="name font-40px">${emojify(
-                        md ? marked(cardName) : sanitizeHtml(cardName)
-                    )}</div>
-                </div>
-                ${getImage(images[0], '100', "logo")}
-            </div>`
-}
-
-function renderWithPrice({images, cardName,  valueHeader, md}: IRenderWithPrice) {
-    console.log(cardName,"::::",sanitizeHtml(valueHeader));
+function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
     return `<div class="header">
-                <div class="details">
-                    ${getImage(images[1], '80', "tokenLogo")}
-                    <div class="name">${emojify(
-                        md ? marked(cardName) : sanitizeHtml(cardName)
-                    )}</div>
-                </div>
-                ${getImage(images[0], '80', "logo")}
+            <div class="details"> 
+               ${getImage(images[0], '80', "logo")}
             </div>
-            <div class="main">
-                <div class="title">${sanitizeHtml(valueHeader)}</div>
-                <div class="details">
-                 
-                   
-                </div>
-            </div>`
+ 
+    ${getImage(images[1],'80','avatar')}
+    </div>
+    <div class="main"> 
+        <div class="title">
+        ${md ? marked(cardName) : sanitizeHtml(cardName)}
+        </div>
+        <div class="content">
+        ${content}
+        </div>
+    </div>
+    `;
 }

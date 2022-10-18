@@ -91,8 +91,8 @@ interface FieldProps {
 const Field = ({ label, input }: FieldProps) => {
     return H('div',
         { className: 'field' },
-        H('label', 
-            H('div', {className: 'field-label'}, label),
+        H('label',
+            H('div', { className: 'field-label' }, label),
             H('div', { className: 'field-value' }, input),
         ),
     );
@@ -104,7 +104,7 @@ interface ToastProps {
 }
 
 const Toast = ({ show, message }: ToastProps) => {
-    const style = { transform:  show ? 'translate3d(0,-0px,-0px) scale(1)' : '' };
+    const style = { transform: show ? 'translate3d(0,-0px,-0px) scale(1)' : '' };
     return H('div',
         { className: 'toast-area' },
         H('div',
@@ -112,7 +112,7 @@ const Toast = ({ show, message }: ToastProps) => {
             H('div',
                 { className: 'toast-inner' },
                 H('div',
-                    { className: 'toast-message'},
+                    { className: 'toast-message' },
                     message
                 )
             )
@@ -136,16 +136,21 @@ const markdownOptions: DropdownOption[] = [
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'CaspertStats', value: 'https://casperstats.io/casperstats_logo.svg' },
-    { text: 'Grindy', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft-dark.svg' },
+    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo.svg' },
+    { text: 'Grafi', value: 'https://gafi.network/static/media/gafi-logo-tagline.3fba4050.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo_dark.svg' },
-    { text: 'Grindy', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
+    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo.svg' },
+    { text: 'Grafi', value: 'https://gafi.network/static/media/gafi-logo-tagline.3fba4050.svg' },
 ];
 
-const protocolImage = "https://casperstats.io/casperstats_logo_dark.svg"
+const typeContentOptions: DropdownOption[] = [
+    { text: 'Default', value: 'default' },
+    { text: 'Block', value: 'default' },
+    { text: 'Validator', value: 'validator' }
+]
+
 
 
 interface AppState extends ParsedRequest {
@@ -175,31 +180,33 @@ const App = (_: any, state: AppState, setState: SetState) => {
         theme = 'light',
         md = false,
         cardName = '',
-        valueHeader = '',
+        content='',
+        typeContent='default', 
         footerURL = "https://casperstats.io/",
-        images=[imageLightOptions[0].value, protocolImage],
+        images = [imageLightOptions[0].value],
         showToast = false,
         messageToast = '',
         loading = true,
         selectedImageIndex = 0,
         overrideUrl = null,
     } = state;
-    
+
     const mdValue = md ? '1' : '0';
     const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
     const url = new URL(window.location.origin);
     url.pathname = `${cardName ? encodeURIComponent(cardName) : "default"}.${fileType}`;
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
-    valueHeader && url.searchParams.append('valueHeader', valueHeader);
+    content && url.searchParams.append('content',content);
+    typeContent && url.searchParams.append('typeContent',typeContent);
     footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
 
     for (let image of images) {
         url.searchParams.append('images', image);
     }
-  
 
-    const showAddImageBtn = images.length === 1 ? ( H(Field, {
+
+    const showAddImageBtn = images.length === 1 ? (H(Field, {
         label: `Image`,
         input: H(Button, {
             label: `Add Image`,
@@ -242,7 +249,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         H(Dropdown, {
                             options: imageOptions,
                             value: imageOptions[selectedImageIndex].value,
-                            onchange: (val: string) =>  {
+                            onchange: (val: string) => {
                                 let clone = [...images];
                                 clone[0] = val;
                                 const selected = imageOptions.map(o => o.value).indexOf(val);
@@ -268,16 +275,25 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }
                     })
                 }),
+                
                 H(Field, {
-                    label: 'Value Header',
+                    label: 'Content',
                     input: H(TextInput, {
-                        value: valueHeader,
+                        value: content,
                         oninput: (val: string) => {
-                            setLoadingState({ valueHeader: val, overrideUrl: url });
+                            setLoadingState({ content: val, overrideUrl: url });
                         }
                     })
                 }),
-             
+                H(Field, {
+                    label: 'Content Type',
+                    input: H(Dropdown, {
+                        options: typeContentOptions,
+                        value: mdValue,
+                        onchange: (val: string) => setLoadingState({ typeContent:val})
+                    })
+                }),
+
                 H(Field, {
                     label: 'Footer URL',
                     input: H(TextInput, {
