@@ -17,21 +17,15 @@ export interface IRenderContent {
     images: string[]
     valueHeader: string
     md: boolean
-    tvl: string
-    trend: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
+  
 }
 
 export interface IRenderWithPrice {
     images: string[] 
     cardName: string
-    tvl: string
     valueHeader: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
     md: boolean, 
-    trend: string
+   
 }
 export interface IRenderWithoutPrice {
     images: string[] 

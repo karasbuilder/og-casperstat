@@ -136,13 +136,13 @@ const markdownOptions: DropdownOption[] = [
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama-dark.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft-dark.svg' },
+    { text: 'CaspertStats', value: 'https://casperstats.io/casperstats_logo.svg' },
+    { text: 'Grindy', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft-dark.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
+    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo_dark.svg' },
+    { text: 'Grindy', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
 ];
 
 const protocolImage = "https://defillama.com/icons/curve.jpg"
@@ -174,11 +174,9 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'jpeg',
         theme = 'light',
         md = false,
-        cardName = 'Curve Finance',
-        valueHeader = 'Total Value Locked',
-        tvl = '$100B',
-        volumeChange = "-2%",
-        footerURL = "https://defillama.com/protocol/curve",
+        cardName = 'CasperStats',
+        valueHeader = 'Casperstats Description Header',
+        footerURL = "https://casperstats.io/",
         images=[imageLightOptions[0].value, protocolImage],
         showToast = false,
         messageToast = '',
@@ -194,8 +192,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
     valueHeader && url.searchParams.append('valueHeader', valueHeader);
-    tvl && url.searchParams.append('tvl', tvl);
-    volumeChange && url.searchParams.append('volumeChange', volumeChange);
     footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
 
     for (let image of images) {
@@ -281,24 +277,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }
                     })
                 }),
-                H(Field, {
-                    label: 'TVL',
-                    input: H(TextInput, {
-                        value: tvl,
-                        oninput: (val: string) => {
-                            setLoadingState({ tvl: val, overrideUrl: url });
-                        }
-                    })
-                }),
-                H(Field, {
-                    label: 'Percent Change',
-                    input: H(TextInput, {
-                        value: volumeChange,
-                        oninput: (val: string) => {
-                            setLoadingState({ volumeChange: val, overrideUrl: url });
-                        }
-                    })
-                }),
+             
                 H(Field, {
                     label: 'Footer URL',
                     input: H(TextInput, {

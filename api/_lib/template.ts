@@ -11,7 +11,7 @@ const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
-function getCss(theme: string, isChangePositive: boolean) {
+function getCss(theme: string) {
     let background = 'white';
     let foreground = 'black';
 
@@ -134,21 +134,6 @@ function getCss(theme: string, isChangePositive: boolean) {
         color: ${theme === "dark" ? "#FFFFFF" : "#213295"};
         margin-right: 40px;
     }
-
-    .main .details .change {
-        font-weight: 600;
-        font-size: 44px;
-        color: ${isChangePositive ? "#4BA433" : "#FF3F28"};
-    }
-
-    .change svg {
-        height: 44px;
-        width: 44px;
-        position: relative;
-        top: 8px;
-        right: -12px;
-    }
-
     .center {
         flex: 1;
         display: flex;
@@ -181,35 +166,23 @@ function getCss(theme: string, isChangePositive: boolean) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, valueHeader, tvl, volumeChange, footerURL, theme, md, images } = parsedReq;
+    const { cardName, valueHeader, footerURL, theme, md, images } = parsedReq;
 
-    const isChangePositive = volumeChange?.includes("+") ?? false;
-    const isChangeNegative = volumeChange?.includes("-") ?? false;
-
-    let trend: string;
-
-    if (isChangePositive) {
-        trend = volumeChange.split("+")[1]
-    } else if (isChangeNegative) {
-        trend = volumeChange.split("-")[1]
-    } else {
-        trend = volumeChange || '';
-    }
-
+  
     return `<!DOCTYPE html>
             <html>
                 <meta charset="utf-8">
                 <title>Generated Image</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
-                    ${getCss(theme, isChangePositive)}
+                    ${getCss(theme)}
                 </style>
                 <body>
-                    ${renderContent({cardName, images, valueHeader, md, tvl, isChangePositive, isChangeNegative, trend})}
+                    ${renderContent({cardName, images, valueHeader, md})}
                     <div class="footer">
-                        Defi Llama is committed to providing accurate data without advertisements or sponsored content, as well as transparency. Learn more on :
+                       Read more about Casperstats on:
                         ${emojify(
-                            md ? marked(footerURL) : sanitizeHtml(footerURL || "https://defillama.com")
+                            md ? marked(footerURL) : sanitizeHtml(footerURL || "https://casperstats.io/")
                         )}
                     </div>
                 </body>
@@ -226,13 +199,13 @@ function getImage(src: string, height = '80', className = 'logo') {
     />`
 }
 
-function renderContent({cardName, images, valueHeader, md, tvl, isChangePositive, isChangeNegative, trend}: IRenderContent) {
+function renderContent({cardName, images, valueHeader, md}: IRenderContent) {
     if (!cardName || cardName === "default") {
         return renderOnlyLogo(images[0])
-    } else if (!valueHeader || !tvl) {
+    } else if (!valueHeader) {
         return renderWithoutPrice({images, cardName, md})
     } else {
-        return renderWithPrice({images, cardName, tvl, valueHeader, isChangePositive, isChangeNegative, md, trend})
+        return renderWithPrice({images, cardName, valueHeader, md})
     }
 }
 
@@ -255,7 +228,7 @@ function renderWithoutPrice({images, cardName, md}: IRenderWithoutPrice) {
             </div>`
 }
 
-function renderWithPrice({images, cardName, tvl, valueHeader, isChangePositive, isChangeNegative, md, trend}: IRenderWithPrice) {
+function renderWithPrice({images, cardName,  valueHeader, md}: IRenderWithPrice) {
     return `<div class="header">
                 <div class="details">
                     ${getImage(images[1], '80', "tokenLogo")}
@@ -268,13 +241,8 @@ function renderWithPrice({images, cardName, tvl, valueHeader, isChangePositive, 
             <div class="main">
                 <div class="title">${sanitizeHtml(valueHeader)}</div>
                 <div class="details">
-                    <div class="value">${sanitizeHtml(tvl)}</div>
-                    <div class="change">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=${isChangePositive ? `"M7 11l5-5m0 0l5 5m-5-5v12"` : isChangeNegative ? `"M17 13l-5 5m0 0l-5-5m5 5V6"` : ''} />
-                        </svg>
-                        ${sanitizeHtml(trend)}
-                    </div>
+                 
+                   
                 </div>
             </div>`
 }
