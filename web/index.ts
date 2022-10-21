@@ -147,8 +147,8 @@ const imageDarkOptions: DropdownOption[] = [
 
 const typeContentOptions: DropdownOption[] = [
     { text: 'Default', value: 'default' },
-    { text: 'Block', value: 'block' },
-    { text: 'Validator', value: 'validator' }
+    { text: 'Content', value: 'content' },
+    { text: 'Content Detail', value: 'detail'}
 ]
 
 
@@ -181,9 +181,10 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'jpeg',
         theme = 'light',
         md = false,
-        cardName = '',
-        content='',
-        typeContent='default', 
+        cardName = 'CasperStats | Casper Blockchain Explorer',
+        content='Casper blockchain explorer - CasperStats',
+        contentType='default',
+        nameDetail='Validator Name',
         footerURL = "https://casperstats.io/",
         images = [imageLightOptions[0].value,avatarImg],
         showToast = false,
@@ -200,7 +201,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
     content && url.searchParams.append('content',content);
-    typeContent && url.searchParams.append('typeContent',typeContent);
+    contentType && url.searchParams.append('contentType',contentType);
+    nameDetail&&url.searchParams.append('nameDetail',nameDetail);
     footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
 
     for (let image of images) {
@@ -273,31 +275,44 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     label: 'Content Type',
                     input: H(Dropdown, {
                         options: typeContentOptions,
-                        value:typeContent,
+                        value:contentType,
                         onchange: (val: ContentType) => {
-                            setLoadingState({ typeContent:val})
-                            console.log("Value///",val);
+                            setLoadingState({contentType:val})
+                            
                         }
                     })
                 }),
-                H(Field, {
-                    label: 'Name',
+                
+                 contentType=='detail'?
+                    H(Field, {
+                        label: 'Name Detail',
+                        input: H(TextInput, {
+                            value: nameDetail,
+                            oninput: (val: string) => {
+                                setLoadingState({ nameDetail: val, overrideUrl: url });
+                            }
+                        })
+                    }):''
+                ,
+                contentType=='detail'||contentType=='content'?
+               H(Field, {
+                    label: 'Name Body',
                     input: H(TextInput, {
                         value: cardName,
                         oninput: (val: string) => {
                             setLoadingState({ cardName: val, overrideUrl: url });
                         }
                     })
-                }),      
+                }) &&
                 H(Field, {
-                    label: 'Content',
+                    label: 'Content Body',
                     input: H(TextInput, {
                         value: content,
                         oninput: (val: string) => {
                             setLoadingState({ content: val, overrideUrl: url });
                         }
                     })
-                }),
+                }):'',
               
 
                 H(Field, {

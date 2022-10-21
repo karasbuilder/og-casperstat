@@ -2,7 +2,7 @@
 import { readFileSync } from 'fs';
 import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest, IRenderContent, IRenderWithTitle, IRenderWithValidator } from './types';
+import { ParsedRequest, IRenderContent, IRenderWithTitle, IRenderWithContentDetail } from './types';
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
@@ -73,9 +73,9 @@ function getCss(theme: string) {
     }
 
     .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+       display:flex;
+       align-items:center;
+       justify-content:space-between;
     }
 
     .header .details {
@@ -90,8 +90,15 @@ function getCss(theme: string) {
          margin-right: 32px;
          color:${foreground};
     }
-    .header .details .avatar{
+    .header .detai.avatar{
 
+    }
+    .header  .title{
+        color:${foreground};
+        display:flex;
+        align-items:center;
+        justify-content:end;
+        
     }
   
 
@@ -157,7 +164,7 @@ function getCss(theme: string) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, footerURL, theme, typeContent, content, md, images } = parsedReq;
+    const { cardName, footerURL, theme, contentType, content, md, images,nameDetail } = parsedReq;
 
 
     return `<!DOCTYPE html>
@@ -169,7 +176,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme)}
                 </style>
                 <body>
-                ${renderContent({ cardName, images, content, md, typeContent })}
+                ${renderContent({ cardName, images, content, md, contentType ,nameDetail})}
                     <div class="footer">                     
                         ${emojify(
                             md ? marked(footerURL) : sanitizeHtml(footerURL || "https://casperstats.io/")
@@ -189,13 +196,13 @@ function getImage(src: string, height = '80', className = 'logo') {
     />`
 }
 //render with default , block , validators
-function renderContent({ cardName, images, content, md, typeContent }: IRenderContent) {
-    if (!cardName || typeContent == "default") {
+function renderContent({ cardName, images, content, md, contentType ,nameDetail}: IRenderContent) {
+    if (!cardName || contentType =="default") {
         return renderOnlyLogo(images[0])
-    } else if (typeContent == 'block') {
+    } else if (contentType =='content') {
         return renderWithTitle({ cardName, images, content, md });
     } else {
-        return renderWithValidators({ cardName, images, content, md });
+        return renderWithContentDetail({ cardName, images, content, md ,nameDetail});
     }
 
 }
@@ -208,38 +215,38 @@ function renderOnlyLogo(image: string) {
 
 function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
     return `
-        <div class="header">
+    <div class="header">
         <div class="details">
             ${getImage(images[0], '80', "logo")}
-        </div>
-
-      
+        </div>     
     </div>
     <div class="main">
         <div class="title">
             ${md ? marked(cardName) : sanitizeHtml(cardName)}
         </div>
-        <div class="content font-40">
-            ${content}
+        <div class="content font-40px">
+            ${sanitizeHtml(content)}
         </div>
     </div
     `;
 }
 
-function renderWithValidators({ cardName, images, content, md }: IRenderWithValidator) {
+function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IRenderWithContentDetail) {
     return `
             <div class="header">
             <div class="details">
-            ${getImage(images[0], '80', "logo")}
-            </div>
-
-        ${getImage(images[1], '80', 'avatar')}
+            ${getImage(images[0], '80', "logo")}      
+        </div>     
+         <div class="title">
+            ${sanitizeHtml(nameDetail)}
+            ${getImage(images[1], '80', 'avatar')}
+            </div> 
         </div>
         <div class="main"> 
         <div class="title">
         ${md ? marked(cardName) : sanitizeHtml(cardName)}
         </div>
-        <div class="content">
+        <div class="content font-40px">
         ${content}
         </div>
         </div>
