@@ -2,7 +2,7 @@
 import { readFileSync } from 'fs';
 import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest, IRenderContent,IRenderWithTitle} from './types';
+import { ParsedRequest, IRenderContent, IRenderWithTitle, IRenderWithValidator } from './types';
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
@@ -86,18 +86,13 @@ function getCss(theme: string) {
         overflow: hidden;
     }
 
-    .header .details .name {
-        font-weight: 600;
-        font-size: 48px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .logo {
+    .header .details .logo {
          margin-right: 32px;
+         color:${foreground};
     }
+    .header .details .avatar{
 
+    }
   
 
     .main {
@@ -106,8 +101,8 @@ function getCss(theme: string) {
         background: ${theme === "dark" ? "#1C1F2E" : "rgba(230, 232, 248, 0.6)"};
         margin: auto 0;
         width: fit-content;
-        min-width: 70%;
-        border-radius: 40px;
+        min-width:80%;
+        border-radius: 20px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -119,17 +114,12 @@ function getCss(theme: string) {
         color: ${theme === "dark" ? "#777B92" : "#8C90B0"};
     }
 
-    .main .details {
+    .main .content {
         margin-top: 44px;
         display: flex;
         align-items: baseline;
-    }
-
-    .main .details .value{
-        font-weight: 600;
-        font-size: 104px;
-        color: ${theme === "dark" ? "#FFFFFF" : "#213295"};
-        margin-right: 40px;
+        font-size:24px;
+        color :${foreground};
     }
     .center {
         flex: 1;
@@ -152,7 +142,8 @@ function getCss(theme: string) {
         font-size: 24px;
         color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
         margin-bottom: -16px;
-        text-align:center;
+        
+       
     }
     
 
@@ -168,7 +159,7 @@ function getCss(theme: string) {
 export function getHtml(parsedReq: ParsedRequest) {
     const { cardName, footerURL, theme, typeContent, content, md, images } = parsedReq;
 
-  
+
     return `<!DOCTYPE html>
             <html>
                 <meta charset="utf-8">
@@ -178,7 +169,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme)}
                 </style>
                 <body>
-                ${renderContent({cardName,images,content,md,typeContent})}
+                ${renderContent({ cardName, images, content, md, typeContent })}
                     <div class="footer">                     
                         ${emojify(
                             md ? marked(footerURL) : sanitizeHtml(footerURL || "https://casperstats.io/")
@@ -186,7 +177,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                     </div>
                 </body>
             </html>`;
-    }
+}
 
 function getImage(src: string, height = '80', className = 'logo') {
     return `<img
@@ -197,14 +188,14 @@ function getImage(src: string, height = '80', className = 'logo') {
         onerror="this.onerror=null; this.remove();"
     />`
 }
-
+//render with default , block , validators
 function renderContent({ cardName, images, content, md, typeContent }: IRenderContent) {
-    if (!cardName || cardName == "default") {
+    if (!cardName || typeContent == "default") {
         return renderOnlyLogo(images[0])
-    } else if (typeContent == 'title') {
-        return renderWithTitle({cardName,images,content,md});
-    } else{
-        return renderWithTitle({cardName,images,content,md});
+    } else if (typeContent == 'block') {
+        return renderWithTitle({ cardName, images, content, md });
+    } else {
+        return renderWithValidators({ cardName, images, content, md });
     }
 
 }
@@ -216,20 +207,41 @@ function renderOnlyLogo(image: string) {
 }
 
 function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
-    return `<div class="header">
-            <div class="details"> 
-               ${getImage(images[0], '80', "logo")}
-            </div>
- 
-    ${getImage(images[1],'80','avatar')}
+    return `
+        <div class="header">
+        <div class="details">
+            ${getImage(images[0], '80', "logo")}
+        </div>
+
+      
     </div>
-    <div class="main"> 
+    <div class="main">
+        <div class="title">
+            ${md ? marked(cardName) : sanitizeHtml(cardName)}
+        </div>
+        <div class="content font-40">
+            ${content}
+        </div>
+    </div
+    `;
+}
+
+function renderWithValidators({ cardName, images, content, md }: IRenderWithValidator) {
+    return `
+            <div class="header">
+            <div class="details">
+            ${getImage(images[0], '80', "logo")}
+            </div>
+
+        ${getImage(images[1], '80', 'avatar')}
+        </div>
+        <div class="main"> 
         <div class="title">
         ${md ? marked(cardName) : sanitizeHtml(cardName)}
         </div>
         <div class="content">
         ${content}
         </div>
-    </div>
-    `;
+        </div>
+    `
 }

@@ -64,7 +64,7 @@ function getString(stringOrArray: string[] | string | undefined) {
 function getDefaultImages(images: string[], theme: Theme): string[] {
     const defaultImage = theme === 'light'
         ? "https://casperstats.io/casperstats_logo.svg"
-        : "https://casperstats.io/casperstats_logo.svg";
+        : "https://casperstats.io/casperstats_logo_dark.svg";
 
     if (!images || !images[0]) {
         return [defaultImage];

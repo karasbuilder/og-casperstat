@@ -1,4 +1,4 @@
-import { ParsedRequest, Theme, FileType } from '../api/_lib/types';
+import { ParsedRequest, Theme, FileType,ContentType } from '../api/_lib/types';
 const { H, R, copee } = (window as any);
 let timeout = -1;
 
@@ -141,13 +141,13 @@ const imageLightOptions: DropdownOption[] = [
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo.svg' },
+    { text: 'CasperStats', value: 'https://casperstats.io/casperstats_logo_dark.svg' },
     { text: 'Grafi', value: 'https://gafi.network/static/media/gafi-logo-tagline.3fba4050.svg' },
 ];
 
 const typeContentOptions: DropdownOption[] = [
     { text: 'Default', value: 'default' },
-    { text: 'Block', value: 'default' },
+    { text: 'Block', value: 'block' },
     { text: 'Validator', value: 'validator' }
 ]
 
@@ -175,6 +175,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
 
         setState({ ...newState, loading: true });
     };
+    const avatarImg="https://foreststaking.com/svg.svg";
+
     const {
         fileType = 'jpeg',
         theme = 'light',
@@ -183,7 +185,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         content='',
         typeContent='default', 
         footerURL = "https://casperstats.io/",
-        images = [imageLightOptions[0].value],
+        images = [imageLightOptions[0].value,avatarImg],
         showToast = false,
         messageToast = '',
         loading = true,
@@ -211,7 +213,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         input: H(Button, {
             label: `Add Image`,
             onclick: () => {
-                const nextImage = 'https://casperstats.io/casperstats_logo_dark.svg'
+                const nextImage = 'https://foreststaking.com/svg.svg'
                 setLoadingState({ images: [...images, nextImage] })
             }
         }),
@@ -266,6 +268,18 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         onchange: (val: string) => setLoadingState({ md: val === '1' })
                     })
                 }),
+              
+                H(Field, {
+                    label: 'Content Type',
+                    input: H(Dropdown, {
+                        options: typeContentOptions,
+                        value:typeContent,
+                        onchange: (val: ContentType) => {
+                            setLoadingState({ typeContent:val})
+                            console.log("Value///",val);
+                        }
+                    })
+                }),
                 H(Field, {
                     label: 'Name',
                     input: H(TextInput, {
@@ -274,8 +288,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                             setLoadingState({ cardName: val, overrideUrl: url });
                         }
                     })
-                }),
-                
+                }),      
                 H(Field, {
                     label: 'Content',
                     input: H(TextInput, {
@@ -285,14 +298,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }
                     })
                 }),
-                H(Field, {
-                    label: 'Content Type',
-                    input: H(Dropdown, {
-                        options: typeContentOptions,
-                        value: mdValue,
-                        onchange: (val: string) => setLoadingState({ typeContent:val})
-                    })
-                }),
+              
 
                 H(Field, {
                     label: 'Footer URL',
