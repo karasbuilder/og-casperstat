@@ -98,7 +98,7 @@ function getCss(theme: string) {
         display:flex;
         align-items:center;
         justify-content:end;
-        
+        font-size:24px;
     }
   
 
@@ -232,23 +232,23 @@ function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
 }
 
 function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IRenderWithContentDetail) {
-    return `
-            <div class="header">
+    return  `
+        <div class="header">
             <div class="details">
-            ${getImage(images[0], '80', "logo")}      
-        </div>     
-         <div class="title">
-            ${sanitizeHtml(nameDetail)}
-            ${getImage(images[1], '80', 'avatar')}
-            </div> 
+                ${getImage(images[0], '80', "logo")}
+            </div>
+            <div class="title">
+                ${sanitizeHtml(nameDetail)}
+                ${getImage(images[1], '80', 'avatar')}
+            </div>
         </div>
-        <div class="main"> 
-        <div class="title">
-        ${md ? marked(cardName) : sanitizeHtml(cardName)}
-        </div>
-        <div class="content font-40px">
-        ${content}
-        </div>
+        <div class="main">
+            <div class="title">
+                ${md ? marked(cardName) : sanitizeHtml(cardName)}
+            </div>
+            <div class="content font-40px">
+                ${content}
+            </div>
         </div>
     `
 }
