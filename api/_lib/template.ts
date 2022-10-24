@@ -170,7 +170,7 @@ function getCss(theme: string) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, footerURL, theme, contentType, content, md, images,nameDetail } = parsedReq;
+    const { title, footerURL, theme, contentType, content, md, images,nameDetail } = parsedReq;
 
 
     return `<!DOCTYPE html>
@@ -183,7 +183,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                 </style>
                 <body>
                 
-                ${renderContent({ cardName, images, content, md, contentType ,nameDetail})}
+                ${renderContent({ title, images, content, md, contentType ,nameDetail})}
                     <div class="footer text-center">                     
                         ${emojify(
                             md ? marked(footerURL) : sanitizeHtml(footerURL || 'https://casperstats.io')
@@ -204,13 +204,13 @@ function getImage(src: string, height = '80', className = 'logo') {
     />`
 }
 //render with default , block , validators
-function renderContent({ cardName, images, content, md, contentType ,nameDetail}: IRenderContent) {
-    if (!cardName || contentType =="default") {
+function renderContent({ title, images, content, md, contentType ,nameDetail}: IRenderContent) {
+    if (!title || contentType =="default") {
         return renderOnlyLogo(images[0])
     } else if (contentType =='content') {
-        return renderWithTitle({ cardName, images, content, md });
+        return renderWithTitle({ title, images, content, md });
     } else {
-        return renderWithContentDetail({ cardName, images, content, md ,nameDetail});
+        return renderWithContentDetail({ title, images, content, md ,nameDetail});
     }
 
 }
@@ -223,7 +223,7 @@ function renderOnlyLogo(image: string) {
      `
 }
 
-function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
+function renderWithTitle({ title, images, content, md }: IRenderWithTitle) {
     return `
     <div class="header text-center">
         <div class="details">
@@ -232,7 +232,7 @@ function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
     </div>
     <div class="main">
         <div class="title">
-            ${md ? marked(cardName) : sanitizeHtml(cardName)}
+            ${md ? marked(title) : sanitizeHtml(title)}
         </div>
         <div class="content font-40px text-center">
             ${sanitizeHtml(content)}
@@ -241,7 +241,7 @@ function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
     `;
 }
 
-function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IRenderWithContentDetail) {
+function renderWithContentDetail({ title, images, content, md,nameDetail}: IRenderWithContentDetail) {
     return  `
         <div class="header">
             <div class="details">
@@ -254,7 +254,7 @@ function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IR
         </div>
         <div class="main ">
             <div class="title">
-                ${md ? marked(cardName) : sanitizeHtml(cardName)}
+                ${md ? marked(title) : sanitizeHtml(title)}
             </div>
             <div class="content font-40px text-center">
                 ${sanitizeHtml(content)}

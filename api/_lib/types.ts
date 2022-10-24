@@ -5,6 +5,7 @@ export type ContentType = 'default'|'content'|'detail';
 export interface ParsedRequest {
     fileType: FileType;
     cardName: string;
+    title:string;
     content: string;
    contentType:string,
     nameDetail:string,
@@ -14,7 +15,7 @@ export interface ParsedRequest {
     images: string[];
 }
 export interface IRenderContent {
-    cardName?: string
+    title?: string
     images: string[]
     content:string
     nameDetail:string
@@ -25,13 +26,13 @@ export interface IRenderContent {
 
 export interface IRenderWithTitle{
     images: string[] 
-    cardName: string
+    title: string
     content:string
     md: boolean, 
    
 }
 export interface IRenderWithContentDetail {
-    cardName:string
+    title:string
     nameDetail:string
     images:string[]
     content:string

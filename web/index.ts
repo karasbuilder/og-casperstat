@@ -181,7 +181,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'jpeg',
         theme = 'light',
         md = false,
-        cardName = 'CasperStats | Casper Blockchain Explorer',
+        cardName = 'Casperstat',
+        title='Casper blockchain explorer - CasperStats',
         content='Casper blockchain explorer - CasperStats',
         contentType='default',
         nameDetail='Validator Name',
@@ -200,6 +201,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.pathname = `${cardName ? encodeURIComponent(cardName) : "default"}.${fileType}`;
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
+    title&&url.searchParams.append('title',title);
     content && url.searchParams.append('content',content);
     contentType && url.searchParams.append('contentType',contentType);
     nameDetail&&url.searchParams.append('nameDetail',nameDetail);
@@ -298,9 +300,9 @@ const App = (_: any, state: AppState, setState: SetState) => {
                H(Field, {
                     label: 'Name Body',
                     input: H(TextInput, {
-                        value: cardName,
+                        value: title,
                         oninput: (val: string) => {
-                            setLoadingState({ cardName: val, overrideUrl: url });
+                            setLoadingState({ title: val, overrideUrl: url });
                         }
                     })
                 }):'',
