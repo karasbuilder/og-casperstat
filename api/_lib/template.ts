@@ -59,6 +59,7 @@ function getCss(theme: string) {
         font-family: 'Inter', sans-serif;
         font-style: normal;
         letter-spacing: -0.01em;
+        text-align:center;
     }
 
     code {
@@ -87,11 +88,10 @@ function getCss(theme: string) {
     }
 
     .header .details .logo {
-         margin-right: 32px;
          color:${foreground};
     }
     .header .detai.avatar{
-
+        margin-left:10px;
     }
     .header .title{
         color:${foreground};
@@ -105,10 +105,10 @@ function getCss(theme: string) {
     .main {
         padding: 40px;
         padding-bottom: 32px;
-        background: ${theme === "dark" ? "#1C1F2E" : "rgba(230, 232, 248, 0.6)"};
+        text-align:center;
         margin: auto 0;
         width: fit-content;
-        min-width:80%;
+        min-width:100%;
         border-radius: 20px;
         white-space: nowrap;
         overflow: hidden;
@@ -125,8 +125,10 @@ function getCss(theme: string) {
         margin-top: 44px;
         display: flex;
         align-items: baseline;
-        font-size:24px;
+        font-size:28px;
         color :${theme==="dark"?"#256D85":"#8c90b0"};
+        
+
     }
     .center {
         flex: 1;
@@ -134,7 +136,11 @@ function getCss(theme: string) {
         justify-content: center;
         align-items: center;
     }
-
+    .text-center{
+        text-align:center;
+        justify-content:center;
+        align-items:center;
+    }
     .header.center {
         justify-content: space-between;
     }
@@ -149,7 +155,7 @@ function getCss(theme: string) {
         font-size: 24px;
         color: ${theme === "dark" ? "#ffffff" : "#575A68"};
         margin-bottom: -16px;
-        
+        text-align:center!important;
        
     }
     
@@ -176,12 +182,14 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme)}
                 </style>
                 <body>
+                
                 ${renderContent({ cardName, images, content, md, contentType ,nameDetail})}
-                    <div class="footer">                     
+                    <div class="footer text-center">                     
                         ${emojify(
                             md ? marked(footerURL) : sanitizeHtml(footerURL || 'https://casperstats.io')
                         )}
                     </div>
+                    
                 </body>
             </html>`;
 }
@@ -210,21 +218,23 @@ function renderOnlyLogo(image: string) {
     return `
     <div class="center">
                 ${getImage(image, "120", "logo")}
-            </div>`
+     </div>
+     
+     `
 }
 
 function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
     return `
-    <div class="header">
+    <div class="header text-center">
         <div class="details">
-            ${getImage(images[0], '80', "logo")}
+            ${getImage(images[0], '70', "logo")}
         </div>     
     </div>
     <div class="main">
         <div class="title">
             ${md ? marked(cardName) : sanitizeHtml(cardName)}
         </div>
-        <div class="content font-40px">
+        <div class="content font-40px text-center">
             ${sanitizeHtml(content)}
         </div>
     </div>
@@ -235,18 +245,18 @@ function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IR
     return  `
         <div class="header">
             <div class="details">
-                ${getImage(images[0], '80', "logo")}
+                ${getImage(images[0], '70', "logo")}
             </div>
             <div class="title">
                 ${sanitizeHtml(nameDetail)}
-                ${getImage(images[1], '80', 'avatar')}
+                ${getImage(images[1], '70', 'avatar')}
             </div>
         </div>
-        <div class="main">
+        <div class="main ">
             <div class="title">
                 ${md ? marked(cardName) : sanitizeHtml(cardName)}
             </div>
-            <div class="content font-40px">
+            <div class="content font-40px text-center">
                 ${sanitizeHtml(content)}
             </div>
         </div>
