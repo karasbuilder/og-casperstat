@@ -17,7 +17,7 @@ function getCss(theme: string) {
 
     if (theme === 'dark') {
         background = '#262938';
-        
+        foreground="white";
     }
 
     return `
@@ -126,7 +126,7 @@ function getCss(theme: string) {
         display: flex;
         align-items: baseline;
         font-size:24px;
-        color :${foreground};
+        color :${theme==="dark"?"#256D85":"#8c90b0"};
     }
     .center {
         flex: 1;
@@ -143,7 +143,7 @@ function getCss(theme: string) {
         font-size: 40px !important;
     }
     
-    .footer {
+    .footer{
         font-style: italic;
         font-weight: normal;
         font-size: 24px;
@@ -179,7 +179,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                 ${renderContent({ cardName, images, content, md, contentType ,nameDetail})}
                     <div class="footer">                     
                         ${emojify(
-                            md ? marked(footerURL) : sanitizeHtml(footerURL || "https://casperstats.io/")
+                            md ? marked(footerURL) : sanitizeHtml(footerURL || 'https://casperstats.io/')
                         )}
                     </div>
                 </body>
@@ -227,7 +227,7 @@ function renderWithTitle({ cardName, images, content, md }: IRenderWithTitle) {
         <div class="content font-40px">
             ${sanitizeHtml(content)}
         </div>
-    </div
+    </div>
     `;
 }
 
@@ -247,7 +247,7 @@ function renderWithContentDetail({ cardName, images, content, md,nameDetail}: IR
                 ${md ? marked(cardName) : sanitizeHtml(cardName)}
             </div>
             <div class="content font-40px">
-                ${content}
+                ${sanitizeHtml(content)}
             </div>
         </div>
     `

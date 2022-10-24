@@ -277,7 +277,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         options: typeContentOptions,
                         value:contentType,
                         onchange: (val: ContentType) => {
-                            setLoadingState({contentType:val})
+                            setLoadingState({contentType:val,overrideUrl:url})
                             
                         }
                     })
