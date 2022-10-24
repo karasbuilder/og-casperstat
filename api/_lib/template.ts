@@ -179,7 +179,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                 ${renderContent({ cardName, images, content, md, contentType ,nameDetail})}
                     <div class="footer">                     
                         ${emojify(
-                            md ? marked(footerURL) : sanitizeHtml(footerURL || 'https://casperstats.io/')
+                            md ? marked(footerURL) : sanitizeHtml(footerURL || 'https://casperstats.io')
                         )}
                     </div>
                 </body>
