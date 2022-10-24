@@ -17,7 +17,7 @@ function getCss(theme: string) {
 
     if (theme === 'dark') {
         background = '#262938';
-        foreground = '#FFFFFF';
+        
     }
 
     return `
@@ -147,7 +147,7 @@ function getCss(theme: string) {
         font-style: italic;
         font-weight: normal;
         font-size: 24px;
-        color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
+        color: ${theme === "dark" ? "#ffffff" : "#575A68"};
         margin-bottom: -16px;
         
        
