@@ -303,7 +303,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
                             setLoadingState({ cardName: val, overrideUrl: url });
                         }
                     })
-                }) &&
+                }):'',
+                contentType=='detail'||contentType=='content'?         
                 H(Field, {
                     label: 'Content Body',
                     input: H(TextInput, {
