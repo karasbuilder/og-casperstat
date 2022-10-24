@@ -93,7 +93,7 @@ function getCss(theme: string) {
     .header .detai.avatar{
 
     }
-    .header  .title{
+    .header .title{
         color:${foreground};
         display:flex;
         align-items:center;
